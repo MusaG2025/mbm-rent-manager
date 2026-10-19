@@ -5,7 +5,7 @@
   "use strict";
 
   const config = window.MBM_SUPABASE_CONFIG || {};
-  const dataKeys = ["mbmTenantMaster", "mbmPropertyMaster", "mbmReceiptsContractFixed"];
+  const dataKeys = ["mbmTenantMaster", "mbmPropertyMaster", "mbmReceiptsContractFixed", "mbmMunicipalAccounts", "mbmOperationsData", "mbmRenewalCases", "mbmCalendarEvents"];
   const statusEl = () => document.getElementById("cloudStatus");
   const byId = id => document.getElementById(id);
   let client = null;
@@ -40,7 +40,11 @@
     return {
       tenant_master: jsonFromStorage("mbmTenantMaster", []),
       property_master: jsonFromStorage("mbmPropertyMaster", []),
-      receipt_history: jsonFromStorage("mbmReceiptsContractFixed", [])
+      receipt_history: jsonFromStorage("mbmReceiptsContractFixed", []),
+      municipal_accounts: jsonFromStorage("mbmMunicipalAccounts", []),
+      operations_data: jsonFromStorage("mbmOperationsData", { workOrders: [], inspections: [] }),
+      renewal_cases: jsonFromStorage("mbmRenewalCases", []),
+      calendar_events: jsonFromStorage("mbmCalendarEvents", [])
     };
   }
 
@@ -85,11 +89,12 @@
     if (typeof loadCustomer === "function" && byId("customer")?.options.length) loadCustomer();
     if (typeof renderHistory === "function") renderHistory();
     if (typeof runReport === "function") runReport();
+    if (window.MBMSystem?.refresh) window.MBMSystem.refresh();
   }
 
   async function loadCloudData() {
     if (!client || !session) return;
-    const { data, error } = await client.from("mbm_app_state").select("tenant_master, property_master, receipt_history, updated_at").maybeSingle();
+    const { data, error } = await client.from("mbm_app_state").select("tenant_master, property_master, receipt_history, municipal_accounts, operations_data, renewal_cases, calendar_events, updated_at").maybeSingle();
     if (error) {
       console.error(error);
       setStatus("Could not load cloud data: " + error.message, "error");
@@ -105,6 +110,10 @@
       localStorage.setItem("mbmTenantMaster", JSON.stringify(Array.isArray(data.tenant_master) ? data.tenant_master : []));
       localStorage.setItem("mbmPropertyMaster", JSON.stringify(Array.isArray(data.property_master) ? data.property_master : []));
       localStorage.setItem("mbmReceiptsContractFixed", JSON.stringify(Array.isArray(data.receipt_history) ? data.receipt_history : []));
+      localStorage.setItem("mbmMunicipalAccounts", JSON.stringify(Array.isArray(data.municipal_accounts) ? data.municipal_accounts : []));
+      localStorage.setItem("mbmOperationsData", JSON.stringify(data.operations_data && typeof data.operations_data === "object" ? data.operations_data : { workOrders: [], inspections: [] }));
+      localStorage.setItem("mbmRenewalCases", JSON.stringify(Array.isArray(data.renewal_cases) ? data.renewal_cases : []));
+      localStorage.setItem("mbmCalendarEvents", JSON.stringify(Array.isArray(data.calendar_events) ? data.calendar_events : []));
       customers = jsonFromStorage("mbmTenantMaster", []);
       properties = jsonFromStorage("mbmPropertyMaster", []);
       refreshAppAfterLoad();
@@ -157,6 +166,37 @@
     await captureSession(null);
   }
 
+  function safeFileSegment(value) {
+    return String(value || "file").replace(/[^a-z0-9._-]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "file";
+  }
+
+  async function uploadPrivateDocument(file, details) {
+    if (!client || !session) return { stored: false, message: "Sign in before uploading a private document." };
+    const ownerFolder = session.user.id;
+    const label = [details?.tenantName, details?.propertyId, details?.unit, details?.contractNumber].filter(Boolean).map(safeFileSegment).join("-") || "contract";
+    const path = ownerFolder + "/contracts/" + Date.now() + "-" + label + "-" + safeFileSegment(file.name);
+    setStatus("Uploading private contract document…", "connected");
+    const { data, error } = await client.storage.from("mbm-private-documents").upload(path, file, { upsert: false, contentType: file.type || undefined });
+    if (error) {
+      console.error(error);
+      setStatus("Contract upload did not finish: " + error.message, "error");
+      return { stored: false, message: error.message };
+    }
+    setStatus("Private contract document uploaded.", "connected");
+    return { stored: true, document: { path: data.path, fileName: file.name, uploadedAt: new Date().toISOString() } };
+  }
+
+  async function openPrivateDocument(path) {
+    if (!client || !session) return { opened: false, message: "Sign in before opening a private document." };
+    const { data, error } = await client.storage.from("mbm-private-documents").createSignedUrl(path, 120);
+    if (error || !data?.signedUrl) {
+      console.error(error);
+      return { opened: false, message: error?.message || "No secure document link was created." };
+    }
+    window.open(data.signedUrl, "_blank", "noopener");
+    return { opened: true };
+  }
+
   async function init() {
     if (!configured()) {
       setButtons(false);
@@ -185,6 +225,6 @@
     client.auth.onAuthStateChange((_event, nextSession) => { captureSession(nextSession); });
   }
 
-  window.MBMCloud = { init, signIn, signUp, signOut, saveNow, loadCloudData };
+  window.MBMCloud = { init, signIn, signUp, signOut, saveNow, loadCloudData, uploadPrivateDocument, openPrivateDocument };
   init();
 }());
