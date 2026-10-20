@@ -1,58 +1,36 @@
-# MBM Property Manager V10
+# MBM Property Management — V12
 
-**Your Trusted Property Partner**  
-Managing Properties. Building Value.  
-Musa Business Management CC · Property & Rental Management · 081 424 4350
+This is the MBM operational workspace for property, leases, renewals, receipts, municipal accounts, maintenance, inspections, documents, compliance and reporting. It is deliberately split into two deployable parts:
 
-## What V10 delivers
+| Part | Purpose | Deploy to |
+| --- | --- | --- |
+| Website files in this folder | The MBM user interface; works in browser-local mode and supports the existing Supabase cloud backup | GitHub Pages |
+| `backend/` | Java / Spring Boot API and PostgreSQL migrations for the long-term, multi-user system | A Java-capable web-service host |
 
-V10 consolidates the usable V1–V9 MBM workflows into one property-management workspace. It is designed around the same practical operating model as leading systems such as Rent Manager: portfolio and vacancies → people and leasing → receivables → maintenance and suppliers → documents, communications and reporting.
+## Start with the website
 
-One shared workspace now connects:
+1. Open `supabase-config.js` and confirm the Project URL and **publishable** key are present. Never put a database password, service-role key or secret key in this file.
+2. Create a GitHub repository, for example `mbm-property-manager`.
+3. Upload only these website files to the repository root: `index.html`, `app.css`, `app.js`, `supabase-config.js`, `supabase-cloud-v10.js`, and `supabase-v12-schema.sql`. Do **not** upload the `backend` folder to the Pages repository.
+4. In GitHub: **Settings → Pages → Deploy from a branch → main → /(root) → Save**.
+5. Wait for the Pages deployment notice, then open the URL shown there. It is normally `https://YOUR-GITHUB-USERNAME.github.io/REPOSITORY-NAME/`.
+6. Use **Settings & Security → Create Account / Sign in**, then use **Save to Cloud**. The app will preserve browser data and can restore it on another device with **Load Cloud Data**.
 
-- Property, unit, owner, prospect and vacancy master data
-- Tenants, leases, contracts, deposit records, documents and live expiry dates
-- A controlled renewal process: notice, negotiation, legal review, management approval, signature and billing activation
-- Charges, payments, payment allocations, printable receipts, WhatsApp Click-to-Chat and historical receipt imports
-- One municipal account per property plus municipal payment history and CSV export
-- Suppliers, quoted vs actual maintenance cost, work orders, inspections, defects and follow-up controls
-- A unified calendar, manual property events and standard `.ics` calendar export
-- Compliance, document-control, vacancy, finance, lease, municipal and operations reports with CSV exports
-- Role design and audit records ready for Supabase Row Level Security
+The browser interface is immediately usable. The Java API is prepared for the next stage, when records must be shared and stored as real relational data instead of browser-backed workspace data.
 
-## What was retained from V1–V9
+## Smart features included
 
-- Property / ERF master, tenant and contract records
-- Receipt creation, printing, reprinting and free WhatsApp receipt messages
-- Historic-payment CSV/JSON import
-- Contract expiry countdown and the renewal approval gate
-- Municipal balance tracker and future API-ready account mapping
-- Maintenance, inspections, calendar and compliance workflow
-- Browser backup/import and migration from the previous MBM browser keys
+- Search across properties, units, tenants, agreements, municipal accounts and work orders.
+- Property hierarchy: portfolio → region → property → building → floor → unit.
+- Location suggestions using OpenStreetMap search, plus device location when you choose it.
+- Property 360 view, agreement renewal countdowns, termination control, occupancy, receipting and WhatsApp receipt links.
+- Municipal account and meter reading tracking; the future integration point is already modelled without pretending a municipality API exists today.
+- Maintenance, inspections, documents, compliance, tasks and connected reporting.
 
-Nothing from the old releases should be deleted until the V10 migration has been tested against real data and a backup has been downloaded.
+## Important security rule
 
-## First local test
+The publishable key is safe to use in the public website. A service-role key, database password and API-host environment values are never safe to publish or commit to GitHub. Keep them only in the secure Environment/Secrets area of the Java hosting service.
 
-Open `index.html` in a browser. On first use it detects the older MBM browser data and creates a V10 copy of available properties, tenants, leases, receipts, municipal accounts, renewals, operations and calendar events. The old data is not deleted.
+## Next stage
 
-Use **Administration → Download full backup** before and after testing. Then test in this order: Property → Unit → Owner/prospect (if needed) → Lease → Charge → Payment → Renewal → Work order → Inspection → Report.
-
-## Supabase setup
-
-1. In Supabase open **SQL Editor → New query**.
-2. Paste all of `supabase-v1-schema.sql` and select **Run**.
-3. Configure authentication and Redirect URLs for the future hosted application.
-4. Do not publish a service-role key in GitHub Pages or any browser file.
-
-The V10 screen is a working browser workspace with backup/import and V1–V9 migration. The supplied schema is the relational cloud foundation. Before inviting staff or exposing an external data API, wire the screens to the organisation-scoped Supabase tables and test the Row Level Security policies.
-
-## Safe future integrations
-
-- **Municipality:** use a Supabase Edge Function and a municipality-approved API; never put municipality credentials in GitHub Pages.
-- **WhatsApp:** the current Click-to-Chat approach is free and requires staff review before sending. WhatsApp Cloud API automation is a later paid/approved integration.
-- **External reporting / owner portal:** expose a read-only Supabase view or authenticated Edge Function after access rules are defined.
-
-## Publish on GitHub Pages
-
-Upload the files in this folder to the root of a new or dedicated GitHub repository. In **Settings → Pages**, select `main` and `/(root)`.
+Follow [`backend/README.md`](backend/README.md) to deploy the Java API. The current front end intentionally continues to use the browser/Supabase backup workflow until the API connection is enabled module by module. This avoids moving live operational data to an unfinished API.
