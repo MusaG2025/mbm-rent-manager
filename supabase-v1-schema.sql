@@ -101,6 +101,20 @@ create table if not exists public.municipal_accounts (
   property_id uuid not null references public.properties(id) on delete cascade, account_number text, current_balance numeric(14,2) not null default 0, statement_date date, due_date date, notes text,
   created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique (property_id)
 );
+
+-- V15: municipal debt-collector repayment agreement tracked per property/account.
+-- These ALTER statements are safe if the V1 schema has already been run.
+alter table public.municipal_accounts add column if not exists arrangement_status text not null default 'No arrangement';
+alter table public.municipal_accounts add column if not exists collector_name text;
+alter table public.municipal_accounts add column if not exists agreement_reference text;
+alter table public.municipal_accounts add column if not exists agreement_total numeric(14,2) not null default 0;
+alter table public.municipal_accounts add column if not exists arrangement_balance numeric(14,2) not null default 0;
+alter table public.municipal_accounts add column if not exists monthly_installment numeric(14,2) not null default 0;
+alter table public.municipal_accounts add column if not exists arrangement_start_date date;
+alter table public.municipal_accounts add column if not exists arrangement_end_date date;
+alter table public.municipal_accounts add column if not exists next_arrangement_due_date date;
+
+alter table public.lease_documents add column if not exists uploaded_at timestamptz not null default now();
 create table if not exists public.work_orders (
   id uuid primary key default gen_random_uuid(), organization_id uuid not null references public.organizations(id) on delete cascade,
   property_id uuid not null references public.properties(id), unit_id uuid references public.units(id), title text not null, description text, priority text not null default 'Normal', assignee text, due_date date, status text not null default 'Open',

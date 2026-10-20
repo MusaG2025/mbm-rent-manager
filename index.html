@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12395f">
   <title>MBM Property Manager</title>
-  <link rel="stylesheet" href="app.css?v=14.0.0">
+  <link rel="stylesheet" href="app.css?v=15.0.0">
 </head>
 <body>
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><span class="brand-mark">⌂</span><div><strong>MBM Property</strong><small>Your property workspace</small></div></div>
-    <div class="workspace-switch"><span class="workspace-avatar">M</span><div><b>Musa Business Management CC</b><small>Owner workspace</small></div><button type="button" aria-label="Workspace options">⌄</button></div>
+    <div class="brand brand-graphic"><img src="mbm-sidebar-brand-v15.png" alt="Musa Business Management CC — Your Trusted Property Partner"></div>
+    <div class="workspace-switch"><span class="workspace-avatar" id="userAvatar">M</span><div><b id="workspaceName">Musa Business Management CC</b><small id="currentUserLabel">Local workspace · Owner</small></div><button type="button" id="accountButton" aria-label="Open workspace administration">⌄</button></div>
     <nav id="nav" aria-label="Main navigation">
       <p>WORKSPACE</p>
       <button class="nav-link active" data-view="today">⌂ <span>Dashboard</span></button>
@@ -28,7 +28,7 @@
   </aside>
 
   <main class="app-shell">
-    <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Open menu">☰</button><div class="page-context"><span class="eyebrow" id="eyebrow">MBM WORKSPACE</span><h1 id="pageTitle">Dashboard</h1></div><div class="smart-search" role="search"><span aria-hidden="true">⌕</span><input id="globalSearch" type="search" autocomplete="off" placeholder="Search properties, tenants, leases, receipts…" aria-label="Search the complete workspace"><button class="clear-search" id="clearSearch" type="button" aria-label="Clear search">×</button><div id="searchResults" class="search-results" hidden></div></div><div class="top-actions"><button class="top-icon" id="assistantButton" title="Smart assistant">✦</button><button class="top-icon" data-view="control" title="Calendar">▣</button><button class="add-button" id="quickAdd">＋ <span>Add</span></button><button class="account-button" id="manualButton">MB <span>Help</span></button></div></header>
+    <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Open menu">☰</button><div class="page-context"><span class="eyebrow" id="eyebrow">MBM WORKSPACE</span><h1 id="pageTitle">Dashboard</h1></div><div class="smart-search" role="search"><span aria-hidden="true">⌕</span><input id="globalSearch" type="search" autocomplete="off" placeholder="Search properties, tenants, contracts, payments…" aria-label="Search the complete workspace"><button class="clear-search" id="clearSearch" type="button" aria-label="Clear search">×</button><div id="searchResults" class="search-results" hidden></div></div><div class="top-actions"><button class="top-icon" id="assistantButton" title="Smart assistant">✦</button><button class="top-icon" data-view="control" title="Calendar">▣</button><button class="add-button" id="quickAdd">＋ <span>Add</span></button><button class="account-button" id="manualButton" title="Open system manual">? <span>Help</span></button></div></header>
     <section class="content" id="app" aria-live="polite"></section>
     <footer class="app-footer"><div><strong>MBM</strong><span>One connected property-management workspace</span></div><div><button type="button" class="link-button" data-action="open-manual">Open system manual</button><span>·</span><span>Free local Smart Assistant — no paid AI service required</span></div></footer>
   </main>
@@ -61,6 +61,6 @@
         .catch(() => {});
     }
   </script>
-  <script src="app.js?v=14.0.0"></script>
+  <script src="app.js?v=15.0.0"></script>
 </body>
 </html>
