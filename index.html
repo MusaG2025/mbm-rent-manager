@@ -4,37 +4,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12395f">
-  <title>MBM Property Management Workspace</title>
+  <title>MBM Property Manager</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <aside class="sidebar" id="sidebar">
-    <div class="brand"><span class="brand-mark">M</span><div><strong>MBM</strong><small>Property Management Workspace</small></div></div>
-    <div class="brand-message"><strong>Your Trusted Property Partner</strong><span>Managing Properties. Building Value.</span><small>Musa Business Management CC · Property &amp; Rental Management</small><b>081 424 4350</b></div>
-    <nav id="nav" aria-label="MBM navigation">
+    <div class="brand"><span class="brand-mark">⌂</span><div><strong>MBM Property</strong><small>Your property workspace</small></div></div>
+    <div class="workspace-switch"><span class="workspace-avatar">M</span><div><b>Musa Business Management CC</b><small>Owner workspace</small></div><button type="button" aria-label="Workspace options">⌄</button></div>
+    <nav id="nav" aria-label="Main navigation">
       <p>WORKSPACE</p>
-      <button class="nav-link active" data-view="today">◈ Today</button>
-      <button class="nav-link" data-view="portfolio">▦ Portfolio</button>
-      <button class="nav-link" data-view="occupancy">♙ Occupancy &amp; Agreements</button>
-      <button class="nav-link" data-view="finance">◫ Revenue &amp; Municipal</button>
-      <button class="nav-link" data-view="operations">⚒ Service &amp; Inspections</button>
-      <button class="nav-link" data-view="control">◷ Control Centre</button>
+      <button class="nav-link active" data-view="today">⌂ <span>Dashboard</span></button>
+      <button class="nav-link" data-view="properties">⌘ <span>Properties &amp; units</span></button>
+      <button class="nav-link" data-view="occupancy">♙ <span>Tenants &amp; leases</span></button>
+      <button class="nav-link" data-view="money">◫ <span>Finance &amp; municipal</span></button>
+      <button class="nav-link" data-view="service">⚒ <span>Maintenance</span></button>
+      <button class="nav-link" data-view="control">✓ <span>Tasks &amp; calendar</span></button>
       <p>MANAGEMENT</p>
-      <button class="nav-link" data-view="reports">▥ Insights &amp; Reports</button>
-      <button class="nav-link" data-view="admin">⚙ Settings &amp; Security</button>
+      <button class="nav-link" data-view="reports">▥ <span>Reports</span></button>
+      <button class="nav-link" data-view="admin">⚙ <span>Settings &amp; help</span></button>
     </nav>
     <div class="sidebar-footer"><span class="online-dot"></span><span id="saveStatus">Local workspace</span></div>
   </aside>
+
   <main class="app-shell">
-    <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Open menu">☰</button><div class="page-context"><span class="eyebrow" id="eyebrow">MBM WORKSPACE</span><h1 id="pageTitle">Today</h1></div><div class="smart-search" role="search"><span>⌕</span><input id="globalSearch" autocomplete="off" placeholder="Find property, ERF, unit, tenant, receipt, work order…"><button id="clearSearch" type="button">×</button><div id="searchResults" class="search-results" hidden></div></div><div class="top-actions"><button class="ghost" id="assistantButton">✦ Smart assistant</button><button class="ghost" id="quickAdd">＋ Add</button><button class="primary" id="backupButton">↓ Backup</button></div></header>
+    <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Open menu">☰</button><div class="page-context"><span class="eyebrow" id="eyebrow">MBM WORKSPACE</span><h1 id="pageTitle">Dashboard</h1></div><div class="smart-search" role="search"><span aria-hidden="true">⌕</span><input id="globalSearch" type="search" autocomplete="off" placeholder="Search properties, tenants, leases, receipts…" aria-label="Search the complete workspace"><button class="clear-search" id="clearSearch" type="button" aria-label="Clear search">×</button><div id="searchResults" class="search-results" hidden></div></div><div class="top-actions"><button class="top-icon" id="assistantButton" title="Smart assistant">✦</button><button class="top-icon" data-view="control" title="Calendar">▣</button><button class="add-button" id="quickAdd">＋ <span>Add</span></button><button class="account-button" id="manualButton">MB <span>Help</span></button></div></header>
     <section class="content" id="app" aria-live="polite"></section>
-    <footer class="app-footer"><div><strong>MBM</strong><span>Property, agreements, revenue, service and compliance in one connected workspace.</span></div><div><button class="link-button" id="manualButton">System manual</button><span>·</span><span>Smart Assistant is local and free</span></div></footer>
+    <footer class="app-footer"><div><strong>MBM</strong><span>One connected property-management workspace</span></div><div><button type="button" class="link-button" id="manualButton">Open system manual</button><span>·</span><span>Free local Smart Assistant — no paid AI service required</span></div></footer>
   </main>
-  <dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">MBM</span><h2 id="modalTitle">Add record</h2></div><button value="cancel" class="icon-button">×</button></div><div id="modalBody"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="default" class="primary">Save record</button></div></form></dialog>
-  <dialog id="manualDialog" class="info-dialog"><div class="modal-head"><div><span class="eyebrow">MBM GUIDE</span><h2>System manual</h2></div><button class="icon-button" id="closeManual">×</button></div><div class="manual-content"><section><b>Portfolio first</b><p>Create the hierarchy in order: Region → Property → Building → Floor → Unit. The property is the central record.</p></section><section><b>Occupancy next</b><p>Add contacts, create an agreement for an existing unit, then manage renewals or terminations from the same agreement.</p></section><section><b>Revenue and service</b><p>Record charges and receipts against agreements. Record municipal accounts, meters, work orders and inspections against the relevant property/unit.</p></section><section><b>Control and reports</b><p>MBM collects expiry dates, due dates, inspections, compliance and tasks into one action queue. Reports calculate from these records without duplicate entry.</p></section><p class="sub">For zero cost, MBM stores data in this browser and can back it up privately to Supabase. Download a backup before switching devices or clearing browser data.</p></div></dialog>
-  <dialog id="assistantDialog" class="info-dialog"><div class="modal-head"><div><span class="eyebrow">MBM SMART ASSISTANT</span><h2>Ask about this workspace</h2></div><button class="icon-button" id="closeAssistant">×</button></div><div class="assistant-content"><p class="sub">Private, rule-based support using the data already in your browser. No paid AI service and no data is sent to an AI provider.</p><div class="assistant-prompt"><input id="assistantQuestion" placeholder="What needs attention? Show arrears or expiring agreements."><button class="primary" type="button" id="askAssistant">Ask</button></div><div class="assistant-answer" id="assistantAnswer">Try: “What needs attention?”, “municipal balance”, “overdue work”, “expiring agreements”, or “vacant units”.</div></div></dialog>
-  <input id="importFile" type="file" accept="application/json" hidden>
+
+  <dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">MBM</span><h2 id="modalTitle">Add record</h2></div><button value="cancel" class="icon-button" aria-label="Close">×</button></div><div id="modalBody"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="default" class="primary" id="modalSubmit">Save record</button></div></form></dialog>
+  <input type="file" id="importFile" accept="application/json" hidden>
+  <input type="file" id="historyFile" accept=".csv,application/json,text/csv" hidden>
+  <div class="quick-add-menu" id="quickAddMenu" hidden aria-label="Create a new record">
+    <button data-type="property">⌂ <span><b>Property</b><small>Start a new property record</small></span></button>
+    <button data-type="unit">▤ <span><b>Unit</b><small>Add a unit to a property</small></span></button>
+    <button data-type="lease">♙ <span><b>Tenant &amp; lease</b><small>Add a tenant and link a unit</small></span></button>
+    <button data-type="payment">＋ <span><b>Payment</b><small>Record a receipt</small></span></button>
+    <button data-type="work">⚒ <span><b>Maintenance</b><small>Create a work order</small></span></button>
+    <button data-type="task">✓ <span><b>Task</b><small>Add a reminder</small></span></button>
+    <button data-type="municipal">◫ <span><b>Municipal account</b><small>Record a bill or balance</small></span></button>
+  </div>
+  <dialog id="manualDialog" class="info-dialog"><div class="modal-head"><div><span class="eyebrow">MBM GUIDE</span><h2>How MBM works</h2></div><button value="cancel" class="icon-button" id="closeManual" aria-label="Close">×</button></div><div class="manual-content"><section><b>1. Set up the property</b><p>Add one property, its location, then its units. This is the master record used everywhere else.</p></section><section><b>2. Record occupancy</b><p>Link a tenant and contract to an existing unit. Expiry dates automatically feed renewals, control and reports.</p></section><section><b>3. Manage money</b><p>Create charges, record payments, allocate receipts and track one municipal account per property.</p></section><section><b>4. Manage service</b><p>Log a work order or inspection against the property/unit. It appears in the control queue and reporting.</p></section><section><b>5. Review and act</b><p>Use Today for priorities, Control Centre for deadlines/documents and Insights for management reporting. Search from the top to find any record.</p></section><p class="sub">Smart Assistant is private, rule-based help running inside this browser. It does not send your property records to an AI provider.</p></div></dialog>
+  <dialog id="assistantDialog" class="info-dialog"><div class="modal-head"><div><span class="eyebrow">MBM SMART ASSISTANT</span><h2>Ask about this workspace</h2></div><button value="cancel" class="icon-button" id="closeAssistant" aria-label="Close">×</button></div><div class="assistant-content"><p class="sub">Free local guidance. Ask about arrears, renewals, municipal exposure, maintenance, vacancies, or what needs attention.</p><div class="assistant-prompt"><input id="assistantQuestion" placeholder="Example: What needs attention this week?"><button class="primary" type="button" id="askAssistant">Ask</button></div><div id="assistantAnswer" class="assistant-answer">Ask a question to receive a data-aware answer from your local MBM workspace.</div></div></dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script><script src="supabase-cloud-v10.js"></script><script src="app.js"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-cloud-v10.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
