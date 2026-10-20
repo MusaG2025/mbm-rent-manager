@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#12395f">
   <title>MBM Property Manager</title>
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="app.css?v=14.0.0">
 </head>
 <body>
   <aside class="sidebar" id="sidebar">
@@ -15,7 +15,8 @@
       <p>WORKSPACE</p>
       <button class="nav-link active" data-view="today">⌂ <span>Dashboard</span></button>
       <button class="nav-link" data-view="properties">⌘ <span>Properties &amp; units</span></button>
-      <button class="nav-link" data-view="occupancy">♙ <span>Tenants &amp; leases</span></button>
+      <button class="nav-link" data-view="occupancy">♙ <span>Tenants &amp; occupancy</span></button>
+      <button class="nav-link" data-view="contracts">▤ <span>Contracts &amp; renewals</span></button>
       <button class="nav-link" data-view="money">◫ <span>Finance &amp; municipal</span></button>
       <button class="nav-link" data-view="service">⚒ <span>Maintenance</span></button>
       <button class="nav-link" data-view="control">✓ <span>Tasks &amp; calendar</span></button>
@@ -29,7 +30,7 @@
   <main class="app-shell">
     <header class="topbar"><button class="menu-button" id="menuButton" aria-label="Open menu">☰</button><div class="page-context"><span class="eyebrow" id="eyebrow">MBM WORKSPACE</span><h1 id="pageTitle">Dashboard</h1></div><div class="smart-search" role="search"><span aria-hidden="true">⌕</span><input id="globalSearch" type="search" autocomplete="off" placeholder="Search properties, tenants, leases, receipts…" aria-label="Search the complete workspace"><button class="clear-search" id="clearSearch" type="button" aria-label="Clear search">×</button><div id="searchResults" class="search-results" hidden></div></div><div class="top-actions"><button class="top-icon" id="assistantButton" title="Smart assistant">✦</button><button class="top-icon" data-view="control" title="Calendar">▣</button><button class="add-button" id="quickAdd">＋ <span>Add</span></button><button class="account-button" id="manualButton">MB <span>Help</span></button></div></header>
     <section class="content" id="app" aria-live="polite"></section>
-    <footer class="app-footer"><div><strong>MBM</strong><span>One connected property-management workspace</span></div><div><button type="button" class="link-button" id="manualButton">Open system manual</button><span>·</span><span>Free local Smart Assistant — no paid AI service required</span></div></footer>
+    <footer class="app-footer"><div><strong>MBM</strong><span>One connected property-management workspace</span></div><div><button type="button" class="link-button" data-action="open-manual">Open system manual</button><span>·</span><span>Free local Smart Assistant — no paid AI service required</span></div></footer>
   </main>
 
   <dialog id="modal"><form method="dialog" id="modalForm"><div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">MBM</span><h2 id="modalTitle">Add record</h2></div><button value="cancel" class="icon-button" aria-label="Close">×</button></div><div id="modalBody"></div><div class="modal-actions"><button value="cancel" class="secondary">Cancel</button><button value="default" class="primary" id="modalSubmit">Save record</button></div></form></dialog>
@@ -39,6 +40,7 @@
     <button data-type="property">⌂ <span><b>Property</b><small>Start a new property record</small></span></button>
     <button data-type="unit">▤ <span><b>Unit</b><small>Add a unit to a property</small></span></button>
     <button data-type="lease">♙ <span><b>Tenant &amp; lease</b><small>Add a tenant and link a unit</small></span></button>
+    <button data-type="lease">▤ <span><b>Contract</b><small>Create a tracked agreement</small></span></button>
     <button data-type="payment">＋ <span><b>Payment</b><small>Record a receipt</small></span></button>
     <button data-type="work">⚒ <span><b>Maintenance</b><small>Create a work order</small></span></button>
     <button data-type="task">✓ <span><b>Task</b><small>Add a reminder</small></span></button>
@@ -49,6 +51,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="supabase-cloud-v10.js"></script>
-  <script src="app.js"></script>
+  <script>
+    // MBM V14 retires offline caches left by older releases. It keeps this
+    // browser on the live GitHub Pages version without a hard refresh.
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations()
+        .then(registrations => Promise.all(registrations.map(registration => registration.unregister())))
+        .then(() => caches?.keys?.().then(keys => Promise.all(keys.filter(key => /^mbm-|rentapp/i.test(key)).map(key => caches.delete(key)))))
+        .catch(() => {});
+    }
+  </script>
+  <script src="app.js?v=14.0.0"></script>
 </body>
 </html>
