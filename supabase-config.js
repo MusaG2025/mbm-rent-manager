@@ -1,6 +1,7 @@
 /*
-  Paste your Project URL and the public anon key from Supabase here.
-  The anon key is designed for browser apps. NEVER put your service_role key here.
+  Browser-safe Supabase connection values for MBM Property Manager V10.
+  This publishable key is safe to expose only because the SQL schema enables
+  Row Level Security. Never add a service_role or other secret key here.
 */
 window.MBM_SUPABASE_CONFIG = {
   url: "https://dmbfzjgqvcbvftxscmbc.supabase.co",

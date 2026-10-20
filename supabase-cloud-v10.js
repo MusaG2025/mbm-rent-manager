@@ -1,0 +1,20 @@
+/* MBM V10 free Supabase backup bridge. The normalized tables are the scale-up
+   model; this owner-only backup keeps the browser edition recoverable today. */
+(() => {
+  'use strict';
+  const config=window.MBM_SUPABASE_CONFIG||{};
+  let client=null, session=null;
+  const ready=()=>/^https:\/\/.+\.supabase\.co\/?$/i.test(String(config.url||''))&&String(config.anonKey||'').length>20&&window.supabase?.createClient;
+  const status=message=>{const el=document.querySelector('#saveStatus');if(el)el.textContent=message;};
+  async function init(){if(!ready())return;client=window.supabase.createClient(config.url,config.anonKey);const {data}=await client.auth.getSession();session=data.session;client.auth.onAuthStateChange((_event,next)=>{session=next;status(next?'Cloud account connected':'Local workspace');});}
+  async function signIn(){if(!client)return alert('Supabase is not available. Check the connection values and reload.');const email=prompt('MBM account email:');if(!email)return;const password=prompt('Password:');if(!password)return;const {data,error}=await client.auth.signInWithPassword({email,password});if(error)return alert(`Sign-in failed: ${error.message}`);session=data.session;status('Cloud account connected');}
+  async function signUp(){if(!client)return alert('Supabase is not available. Check the connection values and reload.');const email=prompt('Email for the MBM account:');if(!email)return;const password=prompt('Choose a password (at least 8 characters):');if(!password)return;const {data,error}=await client.auth.signUp({email,password});if(error)return alert(`Account creation failed: ${error.message}`);if(!data.session)return alert('Account created. Confirm your email, then return here and sign in.');session=data.session;status('Cloud account connected');}
+  async function save(){if(!session)return alert('Sign in before saving to Supabase.');const payload=window.MBMWorkspace?.getState?.();if(!payload)return alert('The MBM workspace has not loaded yet.');const {error}=await client.from('mbm_workspace_backups').upsert({owner_id:session.user.id,payload},{onConflict:'owner_id'});if(error)return alert(`Cloud save failed: ${error.message}`);status('Cloud backup saved');alert('MBM V10 backup saved securely to your Supabase account.');}
+  async function load(){if(!session)return alert('Sign in before loading a cloud backup.');const {data,error}=await client.from('mbm_workspace_backups').select('payload,updated_at').maybeSingle();if(error)return alert(`Cloud load failed: ${error.message}`);if(!data?.payload)return alert('No V10 cloud backup exists for this account yet.');if(!confirm(`Replace this browser workspace with the cloud backup from ${new Date(data.updated_at).toLocaleString()}?`))return;window.MBMWorkspace?.replaceState?.(data.payload);status('Cloud backup loaded');}
+  async function signOut(){if(client)await client.auth.signOut();session=null;status('Local workspace');}
+  const safe=value=>String(value||'file').replace(/[^a-z0-9._-]+/gi,'-').replace(/^-+|-+$/g,'').slice(0,80)||'file';
+  async function uploadPrivateDocument(file,details={}){if(!session)return {ok:false,message:'Sign in before uploading a private document.'};const label=[details.leaseNo,details.propertyCode,file.name].filter(Boolean).map(safe).join('-');const path=`${session.user.id}/documents/${Date.now()}-${label}`;const {data,error}=await client.storage.from('mbm-private-documents').upload(path,file,{upsert:false,contentType:file.type||undefined});if(error)return {ok:false,message:error.message};return {ok:true,path:data.path};}
+  async function openPrivateDocument(path){if(!session)return {ok:false,message:'Sign in before opening a private document.'};const {data,error}=await client.storage.from('mbm-private-documents').createSignedUrl(path,120);if(error||!data?.signedUrl)return {ok:false,message:error?.message||'Could not make a secure link.'};window.open(data.signedUrl,'_blank','noopener');return {ok:true};}
+  window.MBMCloudV10={init,signIn,signUp,save,load,signOut,uploadPrivateDocument,openPrivateDocument};
+  init();
+})();
