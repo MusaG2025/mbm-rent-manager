@@ -50,7 +50,9 @@ $$;
 
 create table if not exists public.properties (
   id uuid primary key default gen_random_uuid(), organization_id uuid not null references public.organizations(id) on delete cascade,
-  code text not null, name text not null, erf text, address text, property_type text not null default 'Residential', status text not null default 'Active',
+  code text not null, name text not null, erf text, address text, locality text, country text,
+  latitude numeric(10,7), longitude numeric(10,7), location_source text, location_accuracy_m numeric(10,2), location_verified_at timestamptz,
+  property_type text not null default 'Residential', status text not null default 'Active',
   created_at timestamptz not null default now(), updated_at timestamptz not null default now(), unique (organization_id, code)
 );
 create table if not exists public.units (
